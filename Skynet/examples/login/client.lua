@@ -62,7 +62,7 @@ local clientkey = crypt.randomkey()
 writeline(fd, crypt.base64encode(crypt.dhexchange(clientkey))) -- step 2-1，客户端生成随机数据
 local secret = crypt.dhsecret(crypt.base64decode(readline()), clientkey) -- step 4-2，收到服务端生成的serverkey， 和客户端的随机数据生成secret
 
-print("--- sceret is ", crypt.hexencode(secret)) -- 服务端下发的 sceret
+print("--- sceret is ", crypt.hexencode(secret))
 
 local hmac = crypt.hmac64(challenge, secret) -- step 5，客户端生成hmac
 writeline(fd, crypt.base64encode(hmac)) -- step 6-1，上行给服务端做最后的握手校验，还不是登陆校验
@@ -98,14 +98,16 @@ print("login ok, subid=", subid) -- 登陆成功，开始连接游戏服
 
 local function send_request(v, session)
 	local size = #v + 4
+    print("----- package len:", size)
 	local package = string.pack(">I2", size)..v..string.pack(">I4", session)
 	socket.send(fd, package)
 	return v, session
 end
 
 local function recv_response(v)
-	local size = #v - 5
-	local content, ok, session = string.unpack("c"..tostring(size).."B>I4", v)
+    print("--- v len:", #v)
+	local size = #v - 5 --长度减去5个字节，（BI4）
+	local content, ok, session = string.unpack("c"..tostring(size)..">BI4", v)
 	return ok ~=0 , content, session
 end
 

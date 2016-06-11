@@ -25,12 +25,12 @@ end
 function __init__()
     db = redis.connect {
         host = "127.0.0.1",
-        port = 6300,
+        port = 6379,
         db   = 0,
-        auth = "foobared"
+        auth = "yangx"
     }
     print("dbsize:", db:dbsize())
-    local ok, msg = xpcall(add1, debug.traceback, "test1", 250000)
+    local ok, msg = xpcall(add1, debug.traceback, "test1", 250)
     if not ok then
         print("add1 failed", msg)
     else
@@ -38,7 +38,7 @@ function __init__()
 
     end
 
-    local ok, msg = xpcall(add2, debug.traceback, "test2", 250000)
+    local ok, msg = xpcall(add2, debug.traceback, "test2", 250)
     if not ok then
         print("add2 failed", msg)
     else

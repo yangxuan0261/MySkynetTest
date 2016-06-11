@@ -4,7 +4,8 @@ local redis = require "redis"
 local conf = {
 	host = "127.0.0.1" ,
 	port = 6379 ,
-	db = 0
+	db = 0,
+    auth = "yangx"
 }
 
 local function watching()

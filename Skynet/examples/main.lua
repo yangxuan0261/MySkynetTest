@@ -17,7 +17,9 @@ skynet.start(function()
 		nodelay = true,
 	})
 
-	skynet.error("Watchdog listen on", 8888)
+	skynet.error("Watchdog listen on 22", 8888)
+
+    local redis = skynet.newservice("testredis")
 --[[
     -- test
     -- local myTest = skynet.newservice("myTest")

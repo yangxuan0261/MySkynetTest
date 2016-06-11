@@ -235,11 +235,11 @@ function server.start(conf) -- conf 就是gated中的server
 	end
 
 	local function do_request(fd, message)
-		local u = assert(connection[fd], "invalid fd")
+		local u = assert(connection[fd], "invalid fd") -- 必须在连接池中
 		local session = string.unpack(">I4", message, -4)
 		message = message:sub(1,-5)
 		local p = u.response[session]
-		if p then
+		if p then -- 相同会话未返回处理
 			-- session can be reuse in the same connection
 			if p[3] == u.version then
 				local last = u.response[session]
@@ -253,7 +253,7 @@ function server.start(conf) -- conf 就是gated中的server
 			end
 		end
 
-		if p == nil then
+		if p == nil then -- 正常发送消息和处理
 			p = { fd }
 			u.response[session] = p
 			local ok, result = pcall(conf.request_handler, u.username, message)
@@ -263,6 +263,7 @@ function server.start(conf) -- conf 就是gated中的server
 				skynet.error(result)
 				result = string.pack(">BI4", 0, session)
 			else
+                 -- result是未序列化的正常字符串
 				result = result .. string.pack(">BI4", 1, session)
 			end
 
@@ -283,7 +284,7 @@ function server.start(conf) -- conf 就是gated中的server
 		u.index = u.index + 1
 		-- the return fd is p[1] (fd may change by multi request) check connect
 		fd = p[1]
-		if connection[fd] then
+		if connection[fd] then -- 下行给客户端前需要检测是否在连接池中
 			socketdriver.send(fd, p[2])
 		end
 		p[1] = nil
@@ -291,6 +292,7 @@ function server.start(conf) -- conf 就是gated中的server
 	end
 
 	local function request(fd, msg, sz)
+        print("----- package len:", sz)
 		local message = netpack.tostring(msg, sz)
 		local ok, err = pcall(do_request, fd, message)
 		-- not atomic, may yield
