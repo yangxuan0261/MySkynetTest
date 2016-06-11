@@ -165,6 +165,13 @@ function server.start(conf) -- conf 就是gated中的server
 
 	-- atomic , no yield
 	local function do_auth(fd, message, addr)
+--[[ -- client
+local handshake = string.format("%s@%s#%s:%d", crypt.base64encode(token.user), crypt.base64encode(token.server),crypt.base64encode(subid) , index)
+local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
+
+send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
+]]
+        print("--- msg:", message)
 		local username, index, hmac = string.match(message, "([^:]*):([^:]*):([^:]*)")
 		local u = user_online[username]
 		if u == nil then
