@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#define CACHE_SIZE 0x1000	
+#define CACHE_SIZE 0x1000
 
 static int
 lconnect(lua_State *L) {
@@ -86,7 +86,7 @@ lsend(lua_State *L) {
 	string last
 	table result
 
-	return 
+	return
 		boolean (true: data, false: block, nil: close)
 		string last
  */
