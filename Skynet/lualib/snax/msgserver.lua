@@ -82,6 +82,7 @@ skynet.register_protocol {
 	id = skynet.PTYPE_CLIENT,
 }
 
+--[[只有login和logout才回对user_online队列进行处理，用户断线也不处理，所以重连需要先判断是否在这个user_online队列中，再判断会话id是否过期]]
 local user_online = {}
 local handshake = {}
 local connection = {}
@@ -106,6 +107,7 @@ function server.logout(username)
 end
 
 function server.login(username, secret)
+    print("--- username:", username)
 	assert(user_online[username] == nil)
 	user_online[username] = {
 		secret = secret,
@@ -171,6 +173,7 @@ local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
 
 send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 ]]
+
         print("--- msg:", message)
 		local username, index, hmac = string.match(message, "([^:]*):([^:]*):([^:]*)")
 		local u = user_online[username]
@@ -242,10 +245,18 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 	end
 
 	local function do_request(fd, message)
-		local u = assert(connection[fd], "invalid fd")
+		local u = assert(connection[fd], "invalid fd") -- 判断链接的合法性
+--[[
+    Client -> Server : Request
+        word size (Not include self)
+        string content (size-4)
+        dword session
+]]
+        print("--- origin message:", message)
 		local session = string.unpack(">I4", message, -4)
 		message = message:sub(1,-5)
-		local p = u.response[session]
+        print("--- session:", session, ", message:", message)
+		local p = u.response[session] -- 本次会话的缓存，包含会话session，response等信息
 		if p then
 			-- session can be reuse in the same connection
 			if p[3] == u.version then
@@ -260,6 +271,14 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 			end
 		end
 
+
+--[[
+    Server -> Client : Response
+        word size (Not include self)
+        string content (size-5)
+        byte ok (1 is ok, 0 is error)
+        dword session
+]]
 		if p == nil then
 			p = { fd }
 			u.response[session] = p

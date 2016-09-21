@@ -1,6 +1,6 @@
-package.cpath = "luaclib/?.so"
+package.cpath = "luaclib/?.so" -- 1. 定义so库的搜索路径
 
-local socket = require "clientsocket"
+local socket = require "clientsocket" -- 2. 包含 clientsocket.so 库
 local crypt = require "crypt"
 
 if _VERSION ~= "Lua 5.3" then
@@ -38,6 +38,7 @@ local function unpack_f(f)
 		if r == "" then
 			error "Server closed"
 		end
+        print("---------- r:", r)
 		return f(last .. r)
 	end
 
@@ -46,6 +47,7 @@ local function unpack_f(f)
 			local result
 			result, last = try_recv(fd, last)
 			if result then
+                -- print("------- result:", result)
 				return result
 			end
 			socket.usleep(100)
@@ -114,11 +116,12 @@ local function unpack_package(text)
 	if size < 2 then
 		return nil, text
 	end
+    -- print("--- receive:", text)
 	local s = text:byte(1) * 256 + text:byte(2)
 	if size < s+2 then
 		return nil, text
 	end
-
+    print("--- unpack_package:", text:sub(3,2+s), text:sub(3+s), s)
 	return text:sub(3,2+s), text:sub(3+s)
 end
 
@@ -164,7 +167,11 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 
 print("--- @@@ ### second connect, gameServer result is:", readpackage())
 print("===>",send_request("fake",0))	-- request again (use last session 0, so the request message is fake)
-print("===>",send_request("again",1))	-- request again (use new session)
+print("===>",send_request("again",1))   -- request again (use new session)
+print("===>",send_request("hello",2))   -- request again (use new session)
+print("===>",send_request("world",3))	-- request again (use new session)
+print("<===",recv_response(readpackage()))
+print("<===",recv_response(readpackage()))
 print("<===",recv_response(readpackage()))
 print("<===",recv_response(readpackage()))
 

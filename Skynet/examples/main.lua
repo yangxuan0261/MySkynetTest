@@ -5,7 +5,7 @@ require "skynet.manager"    -- import skynet.launch, ...
 local max_client = 64
 
 skynet.start(function()
-	skynet.error("Server start")
+	skynet.error(" @@@@@@@@@Server start")
 	skynet.uniqueservice("protoloader")
 	local console = skynet.newservice("console")
 	skynet.newservice("debug_console",8000)
@@ -17,7 +17,17 @@ skynet.start(function()
 		nodelay = true,
 	})
 
+    skynet.call(watchdog, "lua", "printTab")
+    local tab = skynet.call(watchdog, "lua", "getTab")
+    tab[1]= 111
+    for k,v in pairs(tab) do
+        print("--- ret", k,v)
+    end
+    skynet.call(watchdog, "lua", "printTab")
+
 	skynet.error("Watchdog listen on", 8888)
+
+    skynet.newservice("testredis2")
 --[[
     -- test
     -- local myTest = skynet.newservice("myTest")

@@ -58,6 +58,17 @@ function CMD.close(fd)
 	close_agent(fd)
 end
 
+local tmpTab = {1,2,3,4,5}
+function CMD.getTab()
+    return tmpTab
+end
+
+function CMD.printTab()
+    for k,v in pairs(tmpTab) do
+        print(k,v)
+    end
+end
+
 skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
         print(type(session), type(source), type(cmd), type(subcmd))

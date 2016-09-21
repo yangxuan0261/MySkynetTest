@@ -14,7 +14,7 @@ local CMD = {}
 function CMD.login(source, uid, sid, secret)
 	-- you may use secret to make a encrypted data stream
 	skynet.error(string.format("%s is login", uid))
-	gate = source
+	gate = source -- 游戏服地址
 	userid = uid
 	subid = sid
 	-- you may load user data from database
@@ -50,5 +50,12 @@ skynet.start(function()
 		-- the simple echo service
 		skynet.sleep(10)	-- sleep a while
 		skynet.ret("------ client msg:"..msg) -- 直接返回给客户端
+        local test = skynet.newservice("myTest") -- 把登陆服的addr传入gated中，gated中 的 ... 就是指这里传进的不定参数
+
+        skynet.call(test, "lua", "open" , {
+        port = 8888,
+        maxclient = 64,
+        servername = "sample",
+    })
 	end)
 end)
