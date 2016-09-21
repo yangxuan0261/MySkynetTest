@@ -57,9 +57,15 @@ SKYNET_SRC = skynet_main.c skynet_handle.c skynet_module.c skynet_mq.c \
 
 #target为all的所有前置条件（在这也就是target），都会执行以下
 all : \
+<<<<<<< HEAD
   $(SKYNET_BUILD_PATH)/skynet \ #condition1
   $(foreach v, $(CSERVICE), $(CSERVICE_PATH)/$(v).so) \ #condition2
   $(foreach v, $(LUA_CLIB), $(LUA_CLIB_PATH)/$(v).so) #condition2
+=======
+  $(SKYNET_BUILD_PATH)/skynet \
+  $(foreach v, $(CSERVICE), $(CSERVICE_PATH)/$(v).so) \
+  $(foreach v, $(LUA_CLIB), $(LUA_CLIB_PATH)/$(v).so)
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 
 #---------- condition1 begin
 $(SKYNET_BUILD_PATH)/skynet : $(foreach v, $(SKYNET_SRC), skynet-src/$(v)) $(LUA_LIB) $(MALLOC_STATICLIB)
@@ -137,7 +143,10 @@ $(LUA_CLIB_PATH)/mysqlaux.so : lualib-src/lua-mysqlaux.c | $(LUA_CLIB_PATH)
 
 $(LUA_CLIB_PATH)/debugchannel.so : lualib-src/lua-debugchannel.c | $(LUA_CLIB_PATH)
 	$(CC) $(CFLAGS) $(SHARED) -Iskynet-src $^ -o $@
+<<<<<<< HEAD
 #---------- condition3 end
+=======
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 
 clean :
 	rm -f $(SKYNET_BUILD_PATH)/skynet $(CSERVICE_PATH)/*.so $(LUA_CLIB_PATH)/*.so

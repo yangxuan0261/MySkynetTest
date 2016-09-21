@@ -17,6 +17,7 @@ skynet.start(function()
 		nodelay = true,
 	})
 
+<<<<<<< HEAD
     skynet.call(watchdog, "lua", "printTab")
     local tab = skynet.call(watchdog, "lua", "getTab")
     tab[1]= 111
@@ -28,6 +29,11 @@ skynet.start(function()
 	skynet.error("Watchdog listen on", 8888)
 
     skynet.newservice("testredis2")
+=======
+	skynet.error("Watchdog listen on 22", 8888)
+
+    local redis = skynet.newservice("testredis")
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 --[[
     -- test
     -- local myTest = skynet.newservice("myTest")

@@ -8,7 +8,11 @@ master = "127.0.0.1:2013"
 start = "main" --"login/main" -- "main"	-- main script
 bootstrap = "snlua bootstrap"	-- The service for bootstrap
 standalone = "0.0.0.0:2013"
+<<<<<<< HEAD
 luaservice = root.."service/?.lua;"..root.."test/?.lua;"..root.."examples/?.lua"
+=======
+luaservice = root.."service/?.lua;"..root.."test/?.lua;"..root.."examples/?.lua;"..root.."examples/login/?.lua"
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 lualoader = "lualib/loader.lua"
 -- preload = "./examples/preload.lua"	-- run preload.lua before every lua service run
 snax = root.."examples/?.lua;"..root.."test/?.lua"

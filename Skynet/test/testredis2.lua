@@ -68,17 +68,28 @@ function __init__()
         host = "127.0.0.1",
         port = 6379,
         db   = 0,
+<<<<<<< HEAD
         -- auth = "foobared"
     }
     print("dbsize:", db:dbsize())
     local ok, msg = xpcall(add1, debug.traceback, "test1", 25)
+=======
+        auth = "yangx"
+    }
+    print("dbsize:", db:dbsize())
+    local ok, msg = xpcall(add1, debug.traceback, "test1", 250)
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
     if not ok then
         print("add1 failed", msg)
     else
         print("add1 succeed")
     end
 
+<<<<<<< HEAD
     local ok, msg = xpcall(add2, debug.traceback, "test2", 25)
+=======
+    local ok, msg = xpcall(add2, debug.traceback, "test2", 250)
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
     if not ok then
         print("add2 failed", msg)
     else

@@ -245,6 +245,7 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 	end
 
 	local function do_request(fd, message)
+<<<<<<< HEAD
 		local u = assert(connection[fd], "invalid fd") -- 判断链接的合法性
 --[[
     Client -> Server : Request
@@ -258,6 +259,13 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
         print("--- session:", session, ", message:", message)
 		local p = u.response[session] -- 本次会话的缓存，包含会话session，response等信息
 		if p then
+=======
+		local u = assert(connection[fd], "invalid fd") -- 必须在连接池中
+		local session = string.unpack(">I4", message, -4)
+		message = message:sub(1,-5)
+		local p = u.response[session]
+		if p then -- 相同会话未返回处理
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 			-- session can be reuse in the same connection
 			if p[3] == u.version then
 				local last = u.response[session]
@@ -271,6 +279,7 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 			end
 		end
 
+<<<<<<< HEAD
 
 --[[
     Server -> Client : Response
@@ -280,6 +289,9 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
         dword session
 ]]
 		if p == nil then
+=======
+		if p == nil then -- 正常发送消息和处理
+>>>>>>> c38fb7888b84aa960f0f025e6183c58d85397f27
 			p = { fd }
 			u.response[session] = p
 			local ok, result = pcall(conf.request_handler, u.username, message)
@@ -289,6 +301,7 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 				skynet.error(result)
 				result = string.pack(">BI4", 0, session)
 			else
+                 -- result是未序列化的正常字符串
 				result = result .. string.pack(">BI4", 1, session)
 			end
 
@@ -309,7 +322,7 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 		u.index = u.index + 1
 		-- the return fd is p[1] (fd may change by multi request) check connect
 		fd = p[1]
-		if connection[fd] then
+		if connection[fd] then -- 下行给客户端前需要检测是否在连接池中
 			socketdriver.send(fd, p[2])
 		end
 		p[1] = nil
@@ -317,6 +330,7 @@ send_package(fd, handshake .. ":" .. crypt.base64encode(hmac))
 	end
 
 	local function request(fd, msg, sz)
+        print("----- package len:", sz)
 		local message = netpack.tostring(msg, sz)
 		local ok, err = pcall(do_request, fd, message)
 		-- not atomic, may yield
